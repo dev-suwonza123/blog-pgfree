@@ -1,0 +1,20 @@
+@model Kentico.Kontent.Statiq.Memoirs.Models.Page
+<div class="page-single">
+    <div class="entry-header">       
+        <h1 class="posttitle">@Model.Title</h1>        
+    </div>
+</div>
+
+<partial name="Shared/_featured-image" model="Model.Image"/>
+
+<!-- Content -->
+<partial name="Shared/_article" model="Model"/>
+
+@if (Model.System.Codename == "contact")
+{
+    // render contact form
+    <partial name="Shared/contact"/>
+}
+
+<!-- Comments if not disabled with comments: false -->
+<partial name="Shared/comments" model="Model"/>

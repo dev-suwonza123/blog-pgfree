@@ -1,0 +1,89 @@
+@using Kentico.Kontent.Statiq.Memoirs.Models
+@using System.Globalization
+@model Kentico.Kontent.Statiq.Memoirs.Models.Post
+@{
+    var site = ViewData["SiteMetaData"] as SiteSettings;
+    var author = Model.Author.OfType<Author>().FirstOrDefault();
+                ViewData["Author"] = author; }
+<div class="entry-header">
+    <!-- Post Title -->
+    <h1 class="posttitle">@Model.Title</h1>
+    <!-- Author & Date  Box -->
+    @if (author != null)
+    {
+<div class="d-flex align-items-center mt-4">
+    <div>
+        @if (author.AvatarImage?.Any() ?? false)
+        {
+<img class="author-thumb" src="@author.AvatarImage.First().Url?w=250&h=250" alt="@author.Name"> }
+else
+{
+<img class="author-thumb" src="https://www.gravatar.com/avatar/@author.Gravatar?s=250&d=mm&r=x" alt="@author.Name">}
+    </div>
+    <div>
+        Written by <span class="text-dark">@author.Name</span> on
+        <span class="post-date"><time class="post-date" datetime="@Model.PostDate?.ToString("dd-MM-yyyy")">@Model.PostDate?.ToString("d MMMM yyyy")</time></span>
+    </div>
+</div>}
+</div>
+
+<!-- Featured Image -->
+<partial name="Shared/_featured-image" model="Model.Image" />
+
+<!-- Content -->
+<partial name="Shared/_article" model="Model"/>
+
+<!-- Rating -->
+@if (Model.Rating.HasValue)
+{
+<div class="rating mt-4 mb-4 d-flex align-items-center">
+    <strong class="mr-1">Rating:</strong> <partial name="Shared/star_rating" model="Model.Rating.Value" />
+</div>}
+
+<!-- Author Box if enabled from _config.yml -->
+<partial name="Shared/author-box" model="author" />
+
+<!-- Comments if not disabled with comments: false -->
+<partial name="Shared/comments" model="Model"/>
+
+<!-- Share -->
+<partial name="Shared/share" model="Model" />
+
+<!-- Related Post -->
+<partial name="Shared/related-posts" model="Model" />
+
+<!-- Review with LD-JSON, adapt it for your needs if you like, but make sure you test the generated HTML source code first:
+https://search.google.com/structured-data/testing-tool/u/0/
+================================================== -->
+@if (Model.Rating.HasValue){
+<script type="application/ld+json">
+    {
+    "context": "http://schema.org/",
+    "type": "Review",
+    "itemReviewed": {
+    "type": "Thing",
+    "name": "@Model.Title"
+    },
+    "author": {
+    "type": "Person",
+    "name": "@author.Name"
+    },
+    "datePublished": "@Model.PostDate?.ToString("yyyy-MM-dd")",
+    "reviewRating": {
+    "type": "Rating",
+    "ratingValue": "@Model.Rating?.ToString("N2", CultureInfo.InvariantCulture)",
+    "bestRating": "5"
+    }
+    }
+</script>
+}
+@section footerScripts{
+@if (Model.Comments())
+{
+    if (string.IsNullOrWhiteSpace(site.DisqusId))
+    {
+        throw new InvalidOperationException("Please configure the DisqusId in the site setting before enabling comments.");
+    }
+<script id="dsq-count-scr" src="//@(site.DisqusId).disqus.com/count.js"></script>
+}
+}

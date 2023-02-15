@@ -1,0 +1,21 @@
+@using Kentico.Kontent.Statiq.Memoirs.Models
+@model Kentico.Kontent.Statiq.Memoirs.Models.IPageMetadata
+<!-- Post, Page Content
+================================================== -->
+<div class="article-post">
+    <!-- Toc if any -->
+    @if( Model.TableOfContents()){
+        /*if (Model.beforetoc)
+         {
+             <p><em>Model.beforetoc</em></p>
+         }*/
+        <div class="toc mt-4 mb-4 lead">
+        <h3 class="font-weight-bold">Summary</h3>
+        @Html.TableOfContents(Model.Body)
+    </div>
+    }
+    <!-- End Toc -->
+<article>
+    @Html.Raw(Model.Body)
+</article>
+</div>

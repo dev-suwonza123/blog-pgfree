@@ -1,0 +1,16 @@
+@model MemoirsTheme.Models.PagedContent<Kentico.Kontent.Statiq.Memoirs.Models.Post>
+@{
+    ViewData["IsHome"] = Model.Index == 1;
+}
+<div class="blog-grid-container">
+    @foreach (var post in Model.Items)
+    {
+         await Html.RenderPartialAsync("postbox", post);
+    }
+</div>
+
+<div class="bottompagination">
+    <span class="navigation" role="navigation">
+        @{ await Html.RenderPartialAsync("pagination"); }
+    </span>
+</div>
